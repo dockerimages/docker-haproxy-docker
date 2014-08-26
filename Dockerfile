@@ -6,6 +6,7 @@ ENABLED=1 \n\
 # Add extra flags here. \n\
 EXTRAOPTS='-V -d -db -de -m 16'" > /etc/default/haproxy
 RUN cat /etc/default/haproxy
+ENV DOCKER_HOST tcp://172.17.42.1:4243
 ADD ./docker /usr/bin/docker
 ADD ./go /sbin/init
 RUN chmod +x /sbin/init
