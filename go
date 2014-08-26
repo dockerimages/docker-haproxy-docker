@@ -2,14 +2,13 @@
 #running
 while true; do
 # Create ENV HAPROXY_DOMAIN
-DHOST="-H tcp://172.17.42.1:4243"
+#DHOST="-H tcp://172.17.42.1:4243"
 WKD="./"
-docker $DHOST ps | grep 80/tcp | awk '{print $1}' > ${WKD}running_web_container_cid
-docker $DHOST ps | grep 80/tcp | awk '{print $NF}' > ${WKD}running_web_container_name
-docker $DHOST ps | grep 80/tcp | docker $DHOST inspect --format '{{ .NetworkSettings.IPAddress }}' $(awk '{print $NF}') > ${WKD}running_web_container_ip
-#echo 172.17.2.96:7081
-
+docker ps | grep 80/tcp | awk '{print $1}' > ${WKD}running_web_container_cid
+docker ps | grep 80/tcp | awk '{print $NF}' > ${WKD}running_web_container_name
+docker ps | grep 80/tcp | docker $DHOST inspect --format '{{ .NetworkSettings.IPAddress }}' $(awk '{print $NF}') > ${WKD}running_web_container_ip
 paste -d ' ' ${WKD}running_web_container_cid ${WKD}running_web_container_ip ${WKD}running_web_container_name > ${WKD}running_web_containers_cid_ip_name
+# Removing Intermediated Files
 rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_container_ip ${WKD}running_web_container_name ${WKD}acl_list use_list ${WKD}backend_*
 
 
