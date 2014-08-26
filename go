@@ -120,4 +120,4 @@ sudo mv ${WKD}prepared.haproxy.cfg /etc/haproxy/haproxy.cfg
 echo "Done: ----------COPY OVER------------------ "
 sudo service haproxy restart
 #cat ./prepared.haproxy.cfg
-sleep 120: done
+sleep 120; done
