@@ -9,8 +9,8 @@ dockerhost is hardcoded to 172.17.42.1.2434
     
 #USE
 
-    HAPROXY_INTERNAL=$(docker run -d -P dockerimages/haproxy_internal)
+    HAPROXY_INTERNAL=$(docker run -d -P dockerimages/haproxy-internal)
     
 #BUILD 
 
-    BUILD_HAPROXY_INTERNAL=$(docker build -t dockerimages/haproxy_internal git://github.com/dockerimages/haproxy_internal)
+    BUILD_HAPROXY_INTERNAL=$(docker build -t dockerimages/haproxy-internal git://github.com/dockerimages/haproxy_internal)
