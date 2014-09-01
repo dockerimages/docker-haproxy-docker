@@ -47,7 +47,7 @@ while IFS=" " read cid ip name; do
   RZ:\t ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu\n\n"
   
   echo -e "acl by_host_$BACKEND hdr(host) -i ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu" ${HAPROXY_DOMAIN} >> ${WKD}acl_list
-  echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}backend_use_list
+  echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
   echo -e "    server $cid $ip:80 cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
   echo -e "\n\
   backend $BACKEND \n\
