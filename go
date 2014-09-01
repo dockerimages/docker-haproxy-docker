@@ -1,8 +1,7 @@
 #!/bin/bash
-#running
+set -e
 while true; do
 # Create ENV HAPROXY_DOMAIN
-#DHOST="-H tcp://172.17.42.1:4243"
 WKD="./"
 docker ps | grep 80/tcp | awk '{print $1}' > ${WKD}running_web_container_cid
 docker ps | grep 80/tcp | awk '{print $NF}' > ${WKD}running_web_container_name
@@ -28,33 +27,35 @@ echo "Added CB Costum Backend with 172.17.2.181:7081"
 # create a file for every active node
 while IFS=" " read cid ip name; do
 
-# creating the backend and use role, acl
-HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
-BACKEND=$(while IFS= read -r line; do printf "%s" "${line%_*}"; done <<EOF 
-$name 
-EOF
-)
+  # creating the backend and use role, acl
+  HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
+  
+  BACKEND=$name
+  
+  ########### Needs Fixing
+  #BACKEND=$(while IFS= read -r line; do printf "%s" "${line%_*}"; done <<EOF 
+  #$name 
+  #EOF
+  #)
 
-# Printing Some Status Infos
-echo -e "
-CID : $cid\n\
-IP :\t $ip\n\
-FULLNAME :\t $name\n\
-BACKENDNAME: \t $BACKEND\n\
-HAPROXY_DOMAIN:\t $HAPROXY_DOMAIN\n\
-RZ:\t ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu\n\n"
-
-
-
-echo -e "acl by_host_$BACKEND hdr(host) -i ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu" ${HAPROXY_DOMAIN} >> ${WKD}acl_list
-echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
-echo -e "    server $cid $ip:80 cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
-echo -e "\n\
-backend $BACKEND \n\
-  balance leastconn \n\
-  option httpclose \n\
-  option forwardfor \n\
-  cookie JSESSIONID prefix" > backend_$BACKEND
+  # Printing Some Status Infos
+  echo -e "
+  CID : $cid\n\
+  IP :\t $ip\n\
+  FULLNAME :\t $name\n\
+  BACKENDNAME: \t $BACKEND\n\
+  HAPROXY_DOMAIN:\t $HAPROXY_DOMAIN\n\
+  RZ:\t ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu\n\n"
+  
+  echo -e "acl by_host_$BACKEND hdr(host) -i ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu" ${HAPROXY_DOMAIN} >> ${WKD}acl_list
+  echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}backend_use_list
+  echo -e "    server $cid $ip:80 cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
+  echo -e "\n\
+  backend $BACKEND \n\
+    balance leastconn \n\
+    option httpclose \n\
+    option forwardfor \n\
+    cookie JSESSIONID prefix" > backend_$BACKEND
 done < ${WKD}running_web_containers_cid_ip_name
 
 ### Checks
@@ -76,11 +77,10 @@ done < ${WKD}running_web_containers_cid_ip_name
 rm -rf ${WKD}prepared.haproxy.cfg
 cat << EOF > ${WKD}prepared.haproxy.cfg
 global
-#        log /dev/log    local0
-#        log /dev/log    local1 notice
+        log 127.0.0.1 local0
+        log 127.0.0.1 local1 notice
         chroot /var/lib/haproxy
-#        user haproxy
-#        group haproxy
+
 
 defaults
         log     global
@@ -97,16 +97,19 @@ defaults
         errorfile 502 /etc/haproxy/errors/502.http
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
+  
+listen stats :80
+        stats enable
+        stats uri /proxy-stats
 
 frontend http-in
         bind *:80
- #       default_backend server
+      # default_backend server
 bind 0.0.0.0:443 transparent
-
-#    default_backend server
-
-
+      # default_backend server
+      
 EOF
+
 echo -e "\n # Acl Roles" >> ${WKD}prepared.haproxy.cfg
 cat acl_list >> ${WKD}prepared.haproxy.cfg
 echo -e "\n # Use Roles" >> ${WKD}prepared.haproxy.cfg
@@ -118,6 +121,4 @@ rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_container_ip ${WKD}run
 echo "Done: clean up rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_container_ip ${WKD}running_web_container_name ${WKD}acl_list use_list ${WKD}backend_* ${WKD}running_web_containers_cid_ip_name"
 sudo mv ${WKD}prepared.haproxy.cfg /etc/haproxy/haproxy.cfg
 echo "Done: ----------COPY OVER------------------ "
-sudo service haproxy restart
-#cat ./prepared.haproxy.cfg
-sleep 120; done
+haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
