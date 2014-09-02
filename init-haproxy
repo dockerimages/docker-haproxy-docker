@@ -95,6 +95,7 @@ defaults
         stats auth admin:admin
         stats uri /haproxy
         monitor-uri /health
+        mode http
         errorfile 400 /etc/haproxy/errors/400.http
         errorfile 403 /etc/haproxy/errors/403.http
         errorfile 408 /etc/haproxy/errors/408.http
@@ -107,7 +108,7 @@ defaults
 frontend http-in
         bind *:80
       # default_backend server
-bind 0.0.0.0:443 transparent
+        bind 0.0.0.0:443 transparent
       # default_backend server
       
 EOF
