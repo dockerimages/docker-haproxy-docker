@@ -124,4 +124,4 @@ echo "Done: clean up rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_c
 sudo mv ${WKD}prepared.haproxy.cfg /etc/haproxy/haproxy.cfg
 cat /etc/haproxy/haproxy.cfg
 echo "Done: ----------COPY OVER------------------ "
-haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -V -d -db -de -m 16
+haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -V -db -de -m 16
