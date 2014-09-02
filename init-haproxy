@@ -31,7 +31,7 @@ while IFS=" " read cid ip name; do
   
   BACKEND=$name
   
-  ########### Needs Fixing
+  ########### Needs Fixing if last _1 = integer then use this else don't
   #BACKEND=$(while IFS= read -r line; do printf "%s" "${line%_*}"; done <<EOF 
   #$name 
   #EOF
