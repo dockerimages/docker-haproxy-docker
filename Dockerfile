@@ -1,11 +1,9 @@
 FROM dockerimages/ubuntu-core:14.04
 MAINTAINER Frank Lemanschik @ Direkt SPEED Europe <frank@github.dspeed.eu> @frank-dspeed
-
+ENV DOCKER_BUILD ''
+ENV DOCKER_RUN 'docker run -d -p 80:80 -v /usr/bin/docker:/usr/bin/docker --name="HAPROXY-INTERNAL" --restart="always" dockerimages/haproxy-internal)'
 ENV DOCKER_HOST tcp://172.17.42.1:4243
-EXPOSE 80
-
 RUN apt-get -y update && apt-get -y install haproxy
-
 ADD ./init-haproxy /sbin/init
 RUN chmod +x /sbin/init
 CMD ["/sbin/init"]
