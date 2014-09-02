@@ -50,9 +50,12 @@ while IFS=" " read cid ip name; do
   echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
   echo -e "    server $cid $ip:80 cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
   echo -e "\n\
+  
+  
   backend $BACKEND \n\
-    balance leastconn \n\
-    option httpclose \n\
+    mode http \n\
+    option httplog \n\
+    option http-server-close \n\
     option forwardfor \n\
     cookie JSESSIONID prefix" > backend_$BACKEND
 done < ${WKD}running_web_containers_cid_ip_name
@@ -82,13 +85,16 @@ global
 
 
 defaults
-        log     global
-        mode    http
-        option  httplog
-        option  dontlognull
+        log global
+        retries 3
+        maxconn 2000
         contimeout 5000
         clitimeout 50000
         srvtimeout 50000
+        stats enable
+        stats auth admin:admin
+        stats uri /haproxy
+        monitor-uri /health
         errorfile 400 /etc/haproxy/errors/400.http
         errorfile 403 /etc/haproxy/errors/403.http
         errorfile 408 /etc/haproxy/errors/408.http
@@ -97,9 +103,6 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
   
-listen stats :80
-        stats enable
-        stats uri /proxy-stats
 
 frontend http-in
         bind *:80
