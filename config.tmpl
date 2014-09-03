@@ -1,5 +1,43 @@
+global
+	log 127.0.0.1 local0
+	log 127.0.0.1 local1 notice
+	chroot /var/lib/haproxy
+	defaults
+	log global
+	retries 3
+	maxconn 2000
+	contimeout 5000
+	clitimeout 50000
+	srvtimeout 50000
+	stats enable
+	stats auth admin:admin
+	stats uri /haproxy
+	monitor-uri /health
+	mode http
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+frontend http-in
+	bind *:80
+	# default_backend server
+	bind 0.0.0.0:443 transparent
+	# default_backend server
+
+
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
-upstream {{ $host }} {
+acl by_host_{{$value.Env.VIRTUAL_DOMAIN}} hdr(host) -i {{$value.Env.VIRTUAL_DOMAIN}}
+use_backend {{$value.Env.VIRTUAL_DOMAIN}} if by_host_{{$value.Env.VIRTUAL_DOMAIN}}
+
+backend {{$value.Env.VIRTUAL_DOMAIN}}
+	mode http 
+	option httplog 
+	option http-server-close
+	option forwardfor 
+	cookie JSESSIONID prefix" 
 
 {{ range $index, $value := $containers }}
 
@@ -8,7 +46,7 @@ upstream {{ $host }} {
 	{{ if eq $addrLen 1 }}
 		{{ with $address := index $value.Addresses 0 }}
 		   # {{$value.Name}}
-		   server {{ $address.IP }}:{{ $address.Port }};
+		   server {{$value.Name}} {{ $address.IP }}:{{ $address.Port }} cookie A check
 		{{ end }}
 
 	{{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var */}}
@@ -16,7 +54,7 @@ upstream {{ $host }} {
 		{{ range $i, $address := $value.Addresses }}
 		   {{ if eq $address.Port $value.Env.VIRTUAL_PORT }}
 		   # {{$value.Name}}
-		   server {{ $address.IP }}:{{ $address.Port }};
+		   server {{$value.Name}} {{ $address.IP }}:{{ $address.Port }} cookie A check
 		   {{ end }}
 		{{ end }}
 
@@ -25,28 +63,13 @@ upstream {{ $host }} {
 		{{ range $i, $address := $value.Addresses }}
 			{{ if eq $address.Port "80" }}
 			# {{$value.Name}}
-			server {{ $address.IP }}:{{ $address.Port }};
+			server {{$value.Name}} {{ $address.IP }}:{{ $address.Port }} cookie A check
 			{{ end }}
 		{{ end }}
 	{{ end }}
 {{ end }}
-}
 
-server {
-	gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 
-	server_name {{ $host }};
-	proxy_buffering off;
-	error_log /proc/self/fd/2;
-	access_log /proc/self/fd/1;
+  
 
-	location / {
-		proxy_pass http://{{ $host }};
-		include /etc/nginx/proxy_params;
-
-		# HTTP 1.1 support
-		proxy_http_version 1.1;
-		proxy_set_header Connection "";
-	}
-}
 {{ end }}
