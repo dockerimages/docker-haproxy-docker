@@ -27,7 +27,8 @@ echo "Added CB Costum Backend with 172.17.2.181:7081"
 while IFS=" " read cid ip name; do
 
   # creating the backend and use role, acl
-  HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
+  HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/^[^=]*=//' <<< "$(awk '{print}')"
+  
   ### Checks
 # if [ -z "$BACKEND_ID" ]; then
 #	echo "No Backend ID"
