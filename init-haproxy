@@ -29,7 +29,7 @@ while IFS=" " read cid ip name; do
   # creating the backend and use role, acl
   HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
   
-  if [ -z "$HAPROXY_DOMAIN" ] then 
+  if [ -z "$HAPROXY_DOMAIN" ]; then 
     # Variable is empty
     echo "$name got no domain set plz add one \n"
     echo ADD the ENV var HAPROXY_DOMAIN = 'yourdomain.com'
