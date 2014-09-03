@@ -71,7 +71,7 @@ while IFS=" " read cid ip name; do
   echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
   echo -e "    server $cid $ip:${HAPROXY_PORT} cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
   echo -e "\n\
-  backend $BACKEND \n\
+  backend ${BACKEND} \n\
     mode http \n\
     option httplog \n\
     option http-server-close \n\
