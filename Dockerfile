@@ -7,5 +7,5 @@ ENV YOUR_HOST dspeed.eu
 RUN apt-get -y update && apt-get -y install haproxy git ca-certificates
 RUN git clone https://github.com/dockerimages/haproxy-docker /haproxy-docker
 RUN chmod +x /haproxy-docker/*
-WORKDIR ["/haproxy-docker"]
+WORKDIR /haproxy-docker
 CMD ["/haproxy-docker/init"]
