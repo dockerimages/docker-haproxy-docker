@@ -28,6 +28,19 @@ while IFS=" " read cid ip name; do
 
   # creating the backend and use role, acl
   HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
+  ### Checks
+# if [ -z "$BACKEND_ID" ]; then
+#	echo "No Backend ID"
+#	exit 1
+#fi
+
+##### check if we get a node
+#if [ -z "$BACKEND_NODES" ]; then
+#        echo "No Backend NODES"
+#        exit 1
+#fi
+  
+  
   
   if [ -z "$HAPROXY_DOMAIN" ]; then 
     # Variable is empty
@@ -70,17 +83,7 @@ while IFS=" " read cid ip name; do
     cookie JSESSIONID prefix" > backend_$BACKEND
 done < ${WKD}running_web_containers_cid_ip_name
 
-### Checks
-# if [ -z "$BACKEND_ID" ]; then
-#	echo "No Backend ID"
-#	exit 1
-#fi
 
-##### check if we get a node
-#if [ -z "$BACKEND_NODES" ]; then
-#        echo "No Backend NODES"
-#        exit 1
-#fi
 
 
 ###################################
