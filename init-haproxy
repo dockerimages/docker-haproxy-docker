@@ -69,10 +69,11 @@ while IFS=" " read cid ip name; do
   HAPROXY_PORT:\t $HAPROXY_PORT\n\
   URLS:\t ${name}.${YOUR_HOST}, ${cid}.${YOUR_HOST}, ${HAPROXY_DOMAIN}\n\n"
   
-  echo -e "acl by_host_$BACKEND hdr(host) 
-    -i ${name}.${YOUR_HOST} 
-    -i ${cid}.${YOUR_HOST} 
-    -i ${HAPROXY_DOMAIN}" >> ${WKD}acl_list
+  echo "BACKEND: $BACKEND"
+  #echo -e "acl by_host_$BACKEND hdr(host) 
+  #  -i ${name}.${YOUR_HOST} 
+  #  -i ${cid}.${YOUR_HOST} 
+  #  -i ${HAPROXY_DOMAIN}" >> ${WKD}acl_list
   
   echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
   echo -e "    server $cid $ip:${HAPROXY_PORT} cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
