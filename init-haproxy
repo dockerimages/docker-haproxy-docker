@@ -36,14 +36,16 @@ while IFS=" " read cid ip name; do
     BACKEND=$name
   fi
   
+  if [ -z "$HAPROXY_PORT" ]; then 
+    # Variable is empty
+    echo "$name got no Port set plz add one or i use 80 \n"
+    echo ADD the ENV var HAPROXY_PORT = '80'
+    HAPROXY_PORT="80"
+  fi
+  
   BACKEND=$HAPROXY_DOMAIN
   
-  ########### Needs Fixing if last _1 = integer then use this else don't
-  #BACKEND=$(while IFS= read -r line; do printf "%s" "${line%_*}"; done <<EOF 
-  #$name 
-  #EOF
-  #)
-
+  
   # Printing Some Status Infos
   echo -e "
   CID : $cid\n\
@@ -51,11 +53,12 @@ while IFS=" " read cid ip name; do
   FULLNAME :\t $name\n\
   BACKENDNAME: \t $BACKEND\n\
   HAPROXY_DOMAIN:\t $HAPROXY_DOMAIN\n\
-  RZ:\t ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu\n\n"
+  HAPROXY_PORT:\t $HAPROXY_PORT\n\
+  URLS:\t ${name}.${YOUR_HOST}, ${cid}.${YOUR_HOST}, ${HAPROXY_DOMAIN}\n\n"
   
-  echo -e "acl by_host_$BACKEND hdr(host) -i ${name}.s1.rz-h3.dspeed.eu -i ${cid}.s1.rz-h3.dspeed.eu -i ${BACKEND}.dspeed.eu" ${HAPROXY_DOMAIN} >> ${WKD}acl_list
+  echo -e "acl by_host_$BACKEND hdr(host) -i ${name}.${YOUR_HOST} -i ${cid}.${YOUR_HOST} -i ${HAPROXY_DOMAIN}" >> ${WKD}acl_list
   echo -e "use_backend $BACKEND if by_host_$BACKEND" >> ${WKD}use_list
-  echo -e "    server $cid $ip:80 cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
+  echo -e "    server $cid $ip:${HAPROXY_PORT} cookie A check" >> "${WKD}backend_${BACKEND}_nodelist"
   echo -e "\n\
   
   
