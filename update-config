@@ -23,7 +23,7 @@ rm -rf ${WKD}running_web_container_cid ${WKD}running_web_container_ip ${WKD}runn
 # create a file for every active node
 while IFS=" " read cid ip name; do
 # creating the backend and use role, acl
-HAPROXY_DOMAIN="$(docker $DHOST inspect --format ' {{ range $element := .Config.Env }}{{ $element }}{{ "\n" }}{{ end }} ' $cid | grep HAPROXY_DOMAIN | sed 's/^[^=]*=//' <<< "$(awk '{print}')")
+HAPROXY_DOMAIN="$(docker $DHOST inspect --format ' {{ range $element := .Config.Env }}{{ $element }}{{ "\n" }}{{ end }} ' $cid | grep HAPROXY_DOMAIN | sed 's/^[^=]*=//' <<< \"$(awk '{print}')\")"
 ### Checks
 # if [ -z "$BACKEND_ID" ]; then
 # echo "No Backend ID"
