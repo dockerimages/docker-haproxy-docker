@@ -2,9 +2,9 @@
 set -e
 # Create ENV HAPROXY_DOMAIN
 WKD="./"
-docker ps | grep 80/tcp | awk '{print $1}' > ${WKD}running_web_container_cid
-docker ps | grep 80/tcp | awk '{print $NF}' > ${WKD}running_web_container_name
-docker ps | grep 80/tcp | docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(awk '{print $NF}') > ${WKD}running_web_container_ip
+docker ps | grep WEB_ | awk '{print $1}' > ${WKD}running_web_container_cid
+docker ps | grep WEB_ | awk '{print $NF}' > ${WKD}running_web_container_name
+docker ps | grep WEB_ | docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(awk '{print $NF}') > ${WKD}running_web_container_ip
 paste -d ' ' ${WKD}running_web_container_cid ${WKD}running_web_container_ip ${WKD}running_web_container_name > ${WKD}running_web_containers_cid_ip_name
 # Removing Intermediated Files
 rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_container_ip ${WKD}running_web_container_name ${WKD}acl_list use_list ${WKD}backend_*
