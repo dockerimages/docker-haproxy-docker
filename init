@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
-update-update-config-script
+git-update-config
 update-config
 haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -V -db -de -m 16
