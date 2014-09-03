@@ -29,7 +29,14 @@ while IFS=" " read cid ip name; do
   # creating the backend and use role, acl
   HAPROXY_DOMAIN="$(docker $DHOST inspect $cid | grep HAPROXY_DOMAIN | sed 's/\"//' | sed 's/HAPROXY_DOMAIN//' | sed 's/=//' | sed 's/\"//' | sed 's/,//')"
   
-  BACKEND=$name
+  if [ -z "$HAPROXY_DOMAIN" ] then 
+    # Variable is empty
+    echo "$name got no domain set plz add one \n"
+    echo ADD the ENV var HAPROXY_DOMAIN = 'yourdomain.com'
+    BACKEND=$name
+  fi
+  
+  BACKEND=$HAPROXY_DOMAIN
   
   ########### Needs Fixing if last _1 = integer then use this else don't
   #BACKEND=$(while IFS= read -r line; do printf "%s" "${line%_*}"; done <<EOF 
