@@ -10,16 +10,16 @@ paste -d ' ' ${WKD}running_web_container_cid ${WKD}running_web_container_ip ${WK
 rm -rf ${WKD}running_web_container_cid  ${WKD}running_web_container_ip ${WKD}running_web_container_name ${WKD}acl_list use_list ${WKD}backend_*
 
 ### Adding Extra Routes Static
-echo -e "acl by_host_cb hdr(host) -i cb.dspeed.eu"  >> ${WKD}acl_list
-echo -e "use_backend cb if by_host_cb" >> ${WKD}use_list
-echo -e "\n\
-backend cb \n\
-  balance leastconn \n\
-  option httpclose \n\
-  option forwardfor \n\
-  cookie JSESSIONID prefix" > ${WKD}backend_cb
-echo -e "    server cbmain 172.17.2.181:7081 cookie A check" >> ${WKD}backend_cb_nodelist
-echo "Added CB Costum Backend with 172.17.2.181:7081"
+#echo -e "acl by_host_cb hdr(host) -i cb.dspeed.eu"  >> ${WKD}acl_list
+#echo -e "use_backend cb if by_host_cb" >> ${WKD}use_list
+#echo -e "\n\
+#backend cb \n\
+#  balance leastconn \n\
+#  option httpclose \n\
+#  option forwardfor \n\
+#  cookie JSESSIONID prefix" > ${WKD}backend_cb
+#echo -e "    server cbmain 172.17.2.181:7081 cookie A check" >> ${WKD}backend_cb_nodelist
+#echo "Added CB Costum Backend with 172.17.2.181:7081"
 
 
 # DYNAMIC binding using dspeed-docker-tools dcip and count
