@@ -53,7 +53,7 @@ while IFS=" " read cid ip name; do
   if [ -z "$HAPROXY_PORT" ]; then 
     # Variable is empty
     echo "$name got no Port set plz add one or i use 80 \n"
-    echo ADD the ENV var HAPROXY_PORT = '80'
+    echo ADD the ENV var HAPROXY_PORT = 80
     HAPROXY_PORT="80"
   fi
   
