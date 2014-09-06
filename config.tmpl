@@ -28,7 +28,7 @@ frontend http-in
 	# default_backend server
 
 
-{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_DOMAIN" "," }}
 acl by_host_{{$value.Env.VIRTUAL_DOMAIN}} hdr(host) -i {{$value.Env.VIRTUAL_DOMAIN}}
 use_backend {{$value.Env.VIRTUAL_DOMAIN}} if by_host_{{$value.Env.VIRTUAL_DOMAIN}}
 
