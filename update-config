@@ -34,6 +34,7 @@ VIRTUAL_DOMAIN="$(docker $DHOST inspect --format ' {{ range $element := .Config.
 # echo "No Backend NODES"
 # exit 1
 #fi
+BACKEND=$VIRTUAL_DOMAIN
 if [ -z "$VIRTUAL_DOMAIN" ]; then
 # Variable is empty
 echo "$name got no domain set plz add one \n"
@@ -46,7 +47,7 @@ echo "$name got no Port set plz add one or i use 80 \n"
 echo ADD the ENV var VIRTUAL_PORT = 80
 VIRTUAL_PORT="80"
 fi
-BACKEND=$VIRTUAL_DOMAIN
+
 # Printing Some Status Infos
 echo -e "
 CID : $cid\n\
