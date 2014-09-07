@@ -38,7 +38,7 @@ if [ -z "$VIRTUAL_DOMAIN" ]; then
 # Variable is empty
 echo "$name got no domain set plz add one \n"
 echo ADD the ENV var VIRTUAL_DOMAIN = 'yourdomain.com'
-BACKEND=$name
+BACKEND=none
 fi
 if [ -z "$VIRTUAL_PORT" ]; then
 # Variable is empty
