@@ -4,3 +4,4 @@ set -e
 /haproxy-docker/update-config
 service haproxy start
 /haproxy-docker/listner.rb
+exit 0
