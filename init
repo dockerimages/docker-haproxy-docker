@@ -2,4 +2,5 @@
 set -e
 /haproxy-docker/git-update-config
 /haproxy-docker/update-config
-#haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -V -db -de -m 16
+service haproxy start
+/haproxy-docker/listner.rb
