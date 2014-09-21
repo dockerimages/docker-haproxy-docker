@@ -7,5 +7,6 @@ RUN apt-get -y update && apt-get -y install haproxy git ca-certificates
 # ADD https://get.docker.io/builds/Linux/x86_64/docker-latest /usr/bin/docker
 RUN git clone https://github.com/dockerimages/docker-haproxy-docker /haproxy-docker
 RUN chmod +x /haproxy-docker/* /usr/bin/docker
+VOLUME /etc/haproxy
 WORKDIR /haproxy-docker
 CMD ["/haproxy-docker/init"]
